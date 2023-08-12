@@ -1,3 +1,8 @@
+%% Notes
+% Not changing dailyMultiplier from code because confusion with npts inside
+% loadshapes.
+
+%%
 clear;clc;
 
 DSSObj = actxserver('OpenDSSEngine.DSS');
@@ -14,7 +19,7 @@ DSSTransformers=DSSCircuit.Transformers;
 %DSSText.Command='Batchedit regcontrol..* Enabled=no'; % uncomment for tap change as per user's choice
 DSSText.Command='batchedit load..* daily=PQmult'; % Loadshape
 DSSText.Command='New EnergyMeter.Main Line.650632 1';% Energy meter
-dailyMultiplier = 1;
+dailyMultiplier = 1; % Don't change!
 nt=24*dailyMultiplier;
 TimeArray=1:nt;
 %% Uncomment following for Tap chang as per user choice (manually)
@@ -29,7 +34,7 @@ TimeArray=1:nt;
 % Vreg3=1+0.00625*Reg3Tap;
 
 %% Main loop
-DSSText.Command='set mode=daily stepsize=1h number=1'; % TODO: Figure out how to change stepsize dynamically
+DSSText.Command=strcat('set mode=daily stepsize=', getStepSize(dailyMultiplier),' number=1');
 DSSText.Command='set hour=0'; % Start at second 0 of hour 0
 for i=1:nt
     DSSText.Command='get hour';
@@ -68,10 +73,16 @@ end
 EM=csvread('MasterIEEE13_EXP_METERS.CSV',1,4);
 SubkWh=EM(:,1);
 SubkVArh=EM(:,2);
-SubkW24=[SubkWh(TimeArray(1)); SubkWh(TimeArray(2):TimeArray(end))-SubkWh(TimeArray(1):TimeArray(nt-1))];
-SubkVAr24=[SubkVArh(TimeArray(1)); SubkVArh(TimeArray(2):TimeArray(end))-SubkVArh(TimeArray(1):TimeArray(nt-1))];
-SubkVA24=abs(SubkW24+sqrt(-1)*SubkVAr24);
-SubstationkWkVArandkVA24=[SubkW24 SubkVAr24 SubkVA24];
+
+% TODO: Get kW info using these formula dynamically
+% Only use these 4 lines when dailyMultiplier is 1
+if dailyMultiplier == 1
+    SubkW24=[SubkWh(TimeArray(1)); SubkWh(TimeArray(2):TimeArray(end))-SubkWh(TimeArray(1):TimeArray(nt-1))];
+    SubkVAr24=[SubkVArh(TimeArray(1)); SubkVArh(TimeArray(2):TimeArray(end))-SubkVArh(TimeArray(1):TimeArray(nt-1))];
+    SubkVA24=abs(SubkW24+sqrt(-1)*SubkVAr24);
+    SubstationkWkVArandkVA24=[SubkW24 SubkVAr24 SubkVA24];
+end
+
 delete(strcat(pwd,'\MasterIEEE13_EXP_METERS.CSV'))
 % Here SubkW24 SubkVAr24 and SubkVA24 are substation kWs, kVArs, and kVAs for 24 hours period
 clearvars -except SystemLosses LineLosses SubkW24 SubkVAr24 SubkVA24 V1pu V2pu V3pu Vreg1S Vreg2S Vreg3S

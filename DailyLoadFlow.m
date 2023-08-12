@@ -27,6 +27,8 @@ TimeArray=1:nt;
 % Vreg1=1+0.00625*Reg1Tap;
 % Vreg2=1+0.00625*Reg2Tap;
 % Vreg3=1+0.00625*Reg3Tap;
+
+%% Main loop
 DSSText.Command='set mode=daily stepsize=1h number=1'; % TODO: Figure out how to change stepsize dynamically
 DSSText.Command='set hour=0'; % Start at second 0 of hour 0
 for i=1:nt
@@ -61,6 +63,8 @@ for i=1:nt
     Vreg3S(i,:)=Reg3(2);% Secondary winding voltage of Reg3 in 24-hr
     DSSText.Command='Export Meter'; % A MasterIEEE13_EXP_METERS.CSV file will be saved in same path
 end
+
+%% Data processing
 EM=csvread('MasterIEEE13_EXP_METERS.CSV',1,4);
 SubkWh=EM(:,1);
 SubkVArh=EM(:,2);

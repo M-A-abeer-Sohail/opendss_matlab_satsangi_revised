@@ -1,0 +1,15 @@
+clear
+Set DefaultBaseFrequency=50
+new circuit.MasterIEEE13 ! Name of file MasterIEEE13
+~ basekv=115 pu=1.0 phases=3 bus1=SourceBus  
+~ Angle=30  MVAsc3=2000000 MVASC1=2100000 ! to make an infinite source
+Redirect loadshapes.DSS
+Redirect Transformers.txt 
+Redirect Lines.txt
+Redirect Loads.txt
+Redirect Capacitors.txt
+
+Set Voltagebases=[115, 4.16, .48] ! Three Voltage levels
+
+solve
+Calcvoltagebases

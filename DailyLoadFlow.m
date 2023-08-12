@@ -3,9 +3,9 @@
 % loadshapes.
 
 %%
-clear;clc;
+clear; clc;
 
-DSSObj = actxserver('OpenDSSEngine.DSS');
+DSSObj = actxserver('OpenDSSEngine.DSS'); % Accessing COM object
 if ~DSSObj.Start(0)
     disp('Unable to start the OpenDSS Engine');
     return
@@ -14,7 +14,7 @@ end
 DSSText = DSSObj.Text; % Used for all text interfacing from matlab to opendss
 DSSCircuit = DSSObj.ActiveCircuit; % active circuit
 DSSText.Command=strcat('Compile (',pwd,'\MasterIEEE13.dss)');% Path where Master and its associated files are stored.
-DSSText.Command='batchedit load..* Vmin=0.8'; % Set Vmin so that load model property will remain same
+DSSText.Command='batchedit load..* Vmin=0.8'; % Set Vmin so that load model property will remain same: I think this means that Vpu will not go below 0.8 pu
 DSSTransformers=DSSCircuit.Transformers;
 %DSSText.Command='Batchedit regcontrol..* Enabled=no'; % uncomment for tap change as per user's choice
 DSSText.Command='batchedit load..* daily=PQmult'; % Loadshape
@@ -22,6 +22,7 @@ DSSText.Command='New EnergyMeter.Main Line.650632 1';% Energy meter
 dailyMultiplier = 1; % Don't change!
 nt=24*dailyMultiplier;
 TimeArray=1:nt;
+
 %% Uncomment following for Tap chang as per user choice (manually)
 % Xtap=[15	7	6	6	6	7	8	9	11	12	13	14	14	14	14	14	14	14	14	14	14	14	13	12
 % 10	5	4	4	4	4	5	6	7	8	8	9	9	9	9	9	9	9	9	9	9	9	9	9

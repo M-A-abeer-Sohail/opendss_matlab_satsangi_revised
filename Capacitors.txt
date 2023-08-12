@@ -1,3 +1,4 @@
-!CAPACITOR DEFINITIONS
+! CAPACITOR DEFINITIONS
+! Abeer - will probably not use in our own system
 New Capacitor.Cap1 Bus1=675 phases=3 kVAR=600 kV=4.16 
 New Capacitor.Cap2 Bus1=611.3 phases=1 kVAR=100 kV=2.4 
